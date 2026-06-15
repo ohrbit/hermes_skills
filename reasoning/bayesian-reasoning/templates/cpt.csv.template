@@ -1,0 +1,120 @@
+# CPT CSV Template
+
+Each row: variable, parent1, parent2, ..., state, probability
+
+For discrete variable with parents:
+```csv
+variable,parent1,parent2,state,probability
+grasp_stability,cube_weight,surface_friction,low,0.1
+grasp_stability,cube_weight,surface_friction,medium,0.3
+grasp_stability,cube_weight,surface_friction,high,0.6
+grasp_stability,cube_weight,surface_friction,low,0.4
+# ... all combinations of parent states
+```
+
+For variable without parents (prior):
+```csv
+variable,state,probability
+task_context,clean,0.5
+task_context,cluttered,0.3
+task_context,dynamic,0.15
+task_context,constrained,0.05
+```
+
+For continuous variable (discretized):
+```csv
+variable,bin,probability
+cube_weight,0,0.1
+cube_weight,1,0.2
+cube_weight,2,0.4
+cube_weight,3,0.2
+cube_weight,4,0.1
+```
+
+---
+
+## Example: pick_place_outcome CPT
+
+```csv
+# grasp_stability depends on cube_weight (3 bins), surface_friction (3 bins), gripper_force (3 bins)
+# 3x3x3 = 27 parent combinations x 3 states = 81 rows
+variable,cube_weight_bin,friction_bin,force_bin,state,probability
+grasp_stability,0,0,0,low,0.6
+grasp_stability,0,0,0,medium,0.3
+grasp_stability,0,0,0,high,0.1
+grasp_stability,0,0,1,low,0.3
+grasp_stability,0,0,1,medium,0.4
+grasp_stability,0,0,1,high,0.3
+# ... etc
+
+# success depends on grasp_stability
+variable,grasp_stability,state,probability
+success,low,fail,0.8
+success,low,succeed,0.2
+success,medium,fail,0.3
+success,medium,succeed,0.7
+success,high,fail,0.05
+success,high,succeed,0.95
+```
+
+---
+
+## Example: robot_faults CPT
+
+```csv
+# Root causes (priors)
+variable,state,probability
+joint_overheating,false,0.95
+joint_overheating,true,0.05
+encoder_drift,false,0.98
+encoder_drift,true,0.02
+mechanical_wear,false,0.9
+mechanical_wear,true,0.1
+
+# Symptoms given causes
+variable,joint_overheating,mechanical_wear,state,probability
+high_current,false,false,0.01
+high_current,false,true,0.2
+high_current,true,false,0.7
+high_current,true,true,0.95
+
+variable,encoder_drift,mechanical_wear,state,probability
+position_error,false,false,0.01
+position_error,false,true,0.1
+position_error,true,false,0.6
+position_error,true,true,0.9
+
+variable,joint_overheating,state,probability
+thermal_shutdown,false,0.999
+thermal_shutdown,true,0.3
+```
+
+---
+
+## Validation Rules
+
+1. **For each parent combination**, probabilities over states must sum to 1.0
+2. **All parent combinations** must be covered (no missing rows)
+3. **State names** must match the `states` list in registry.yaml
+4. **Variable names** must match exactly (case-sensitive)
+
+---
+
+## Generating CPTs from Data
+
+```python
+from scripts.learner import ModelLearner
+import pandas as pd
+
+# Learn from data
+learner = ModelLearner(structure_method="hc", param_method="mle")
+learned = learner.learn(df)
+
+# Export CPTs as CSV
+from scripts.learner import ModelLearner  # reusing save_model
+learner.save_model(learned, "models/learned/my_model")
+# Creates:
+# models/learned/my_model/model.bif
+# models/learned/my_model/cpt_<variable>.csv
+# models/learned/my_model/meta.json
+```

@@ -1,0 +1,259 @@
+# Model Registry Template
+
+Copy to `models/registry.yaml` and customize.
+
+```yaml
+models:
+  # ====================
+  # BAYESIAN NETWORKS (Causal, Directed)
+  # ====================
+  
+  # Predict skill outcome from context
+  pick_place_outcome:
+    type: bayesian
+    description: "Predict pick-place success from context variables"
+    inference: variable_elimination  # or belief_propagation, causal
+    variables:
+      - name: "cube_weight"
+        type: continuous
+        parents: []
+        distribution: "gamma"
+        params: {shape: 2.0, scale: 0.5}
+      
+      - name: "surface_friction"
+        type: continuous
+        parents: []
+        distribution: "beta"
+        params: {alpha: 2.0, beta: 5.0}
+      
+      - name: "gripper_force"
+        type: continuous
+        parents: []
+        distribution: "gaussian"
+        params: {mean: 30.0, std: 5.0}
+      
+      - name: "grasp_stability"
+        type: discrete
+        states: [low, medium, high]
+        parents: ["cube_weight", "surface_friction", "gripper_force"]
+      
+      - name: "success"
+        type: discrete
+        states: [fail, succeed]
+        parents: ["grasp_stability"]
+    cpts: "models/cpts/pick_place_outcome.csv"
+  
+  # Diagnostic: symptoms -> root cause
+  robot_fault_diagnosis:
+    type: bayesian
+    description: "Diagnose robot faults from sensor readings"
+    inference: variable_elimination
+    variables:
+      - name: "joint_overheating"
+        type: discrete
+        states: [false, true]
+        parents: []
+      
+      - name: "encoder_drift"
+        type: discrete
+        states: [false, true]
+        parents: []
+      
+      - name: "mechanical_wear"
+        type: discrete
+        states: [false, true]
+        parents: []
+      
+      - name: "high_current"
+        type: discrete
+        states: [false, true]
+        parents: ["joint_overheating", "mechanical_wear"]
+      
+      - name: "position_error"
+        type: discrete
+        states: [false, true]
+        parents: ["encoder_drift", "mechanical_wear"]
+      
+      - name: "thermal_shutdown"
+        type: discrete
+        states: [false, true]
+        parents: ["joint_overheating"]
+      
+      - name: "tracking_loss"
+        type: discrete
+        states: [false, true]
+        parents: ["encoder_drift"]
+    cpts: "models/cpts/robot_faults.csv"
+  
+  # Sim-to-real gap model
+  sim2real_transfer:
+    type: bayesian
+    description: "Model sim-to-real transfer for policy deployment"
+    inference: causal
+    variables:
+      - name: "domain_randomization"
+        type: discrete
+        states: [none, low, medium, high]
+        parents: []
+      
+      - name: "policy_robustness"
+        type: discrete
+        states: [low, medium, high]
+        parents: ["domain_randomization"]
+      
+      - name: "sim_performance"
+        type: continuous
+        parents: []
+      
+      - name: "real_performance"
+        type: continuous
+        parents: ["policy_robustness", "sim_performance"]
+      
+      - name: "deployment_success"
+        type: discrete
+        states: [fail, partial, success]
+        parents: ["real_performance"]
+    cpts: "models/cpts/sim2real.csv"
+  
+  # ====================
+  # MARKOV NETWORKS (Correlational, Undirected)
+  # ====================
+  
+  # Sensor fusion for localization
+  localization_belief:
+    type: markov
+    description: "Fuse odometry, vision, LiDAR for pose belief"
+    inference: belief_propagation
+    variables:
+      - name: "pose_x"
+        type: continuous
+      - name: "pose_y"
+        type: continuous
+      - name: "pose_theta"
+        type: continuous
+      - name: "odom_x"
+        type: continuous
+      - name: "odom_y"
+        type: continuous
+      - name: "odom_theta"
+        type: continuous
+      - name: "vision_x"
+        type: continuous
+      - name: "vision_y"
+        type: continuous
+      - name: "lidar_scan_id"
+        type: discrete
+        states: [0, 1, 2, 3, 4, 5, 6, 7]
+    factors:
+      - variables: ["pose_x", "pose_y", "odom_x", "odom_y"]
+        potential: "models/factors/odometry_factor.py"
+      - variables: ["pose_x", "pose_y", "vision_x", "vision_y"]
+        potential: "models/factors/vision_factor.py"
+      - variables: ["pose_x", "pose_y", "lidar_scan_id"]
+        potential: "models/factors/lidar_factor.py"
+      - variables: ["pose_theta", "odom_theta"]
+        potential: "models/factors/heading_factor.py"
+  
+  # Workspace occupancy grid
+  occupancy_belief:
+    type: markov
+    description: "Probabilistic occupancy grid from multiple sensors"
+    inference: belief_propagation
+    variables:
+      - name: "cell_0"
+        type: discrete
+        states: [free, occupied, unknown]
+      - name: "cell_1"
+        type: discrete
+        states: [free, occupied, unknown]
+      # ... more cells
+    factors:
+      - variables: ["cell_0", "cell_1"]
+        potential: "models/factors/spatial_smoothness.py"
+      - variables: ["cell_0", "sensor_0"]
+        potential: "models/factors/sensor_model.py"
+  
+  # ====================
+  # INFLUENCE DIAGRAMS (Decisions + Utilities)
+  # ====================
+  
+  # Skill selection under uncertainty
+  skill_selector:
+    type: influence_diagram
+    description: "Choose skill maximizing expected utility"
+    inference: variable_elimination
+    variables:
+      - name: "task_context"
+        type: discrete
+        states: [clean, cluttered, dynamic, constrained]
+        parents: []
+      
+      - name: "skill_choice"
+        type: decision
+        states: [pick_place, push_grasp, suction_grasp, request_human]
+        parents: ["task_context"]
+      
+      - name: "success"
+        type: chance
+        states: [fail, succeed]
+        parents: ["skill_choice", "task_context"]
+      
+      - name: "collision_risk"
+        type: continuous
+        parents: ["skill_choice", "task_context"]
+      
+      - name: "time_cost"
+        type: continuous
+        parents: ["skill_choice", "task_context"]
+      
+      - name: "utility"
+        type: utility
+        parents: ["success", "collision_risk", "time_cost"]
+    cpts: "models/cpts/skill_selector.csv"
+    utility: "models/utilities/skill_utility.py"
+  
+  # Human-robot handover decision
+  handover_decision:
+    type: influence_diagram
+    description: "Decide when and how to hand over object to human"
+    inference: variable_elimination
+    variables:
+      - name: "human_intent"
+        type: discrete
+        states: [ready, reaching, not_ready, distracted]
+        parents: []
+      
+      - name: "object_fragility"
+        type: discrete
+        states: [low, medium, high]
+        parents: []
+      
+      - name: "handover_timing"
+        type: decision
+        states: [immediate, wait_ready, place_on_table]
+        parents: ["human_intent", "object_fragility"]
+      
+      - name: "handover_success"
+        type: chance
+        states: [drop, awkward, smooth]
+        parents: ["handover_timing", "human_intent", "object_fragility"]
+      
+      - name: "human_trust"
+        type: continuous
+        parents: ["handover_timing", "handover_success"]
+      
+      - name: "utility"
+        type: utility
+        parents: ["handover_success", "human_trust"]
+    cpts: "models/cpts/handover.csv"
+    utility: "models/utilities/handover_utility.py"
+
+# ====================
+# GLOBAL SETTINGS
+# ====================
+global:
+  default_inference: variable_elimination
+  auto_learn_enabled: true
+  retrain_threshold: 100
+  max_models_in_memory: 20
+```

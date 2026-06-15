@@ -1,0 +1,123 @@
+# Isaac Lab Skill Registry
+# Copy to skills/registry.yaml and customize
+
+skills:
+  # Example: Franka Emika Panda pick-place
+  pick_place:
+    isaac_task: "PickPlace-Cube-Franka-v0"
+    policy_checkpoint: "logs/rsl_rl/pick_place/policy.pt"
+    policy_type: "rsl_rl"  # rsl_rl, skrl, stable_baselines3, cleanrl
+    obs_space:
+      - "joint_pos"
+      - "joint_vel"
+      - "eef_pos"
+      - "eef_quat"
+      - "cube_pos"
+      - "cube_quat"
+    action_space: "joint_position"  # joint_position, joint_velocity, joint_torque
+    action_dim: 9  # 7 arm + 2 finger
+    params:
+      - name: "target_position"
+        type: "vector3"
+        description: "Target cube position [x, y, z]"
+        default: [0.5, 0.0, 0.1]
+      - name: "grasp_width"
+        type: "float"
+        description: "Gripper opening width [m]"
+        default: 0.04
+      - name: "approach_height"
+        type: "float"
+        description: "Approach height above target [m]"
+        default: 0.15
+    safety_limits:
+      max_force: 50.0
+      max_velocity: 1.5
+      max_joint_velocity: 3.14
+      workspace_bounds:
+        min: [-0.8, -0.8, 0.0]
+        max: [0.8, 0.8, 1.2]
+      collision_check: true
+      emergency_stop_topic: "/emergency_stop"
+  
+  # Example: Pour liquid
+  pour:
+    isaac_task: "Pour-Liquid-Franka-v0"
+    policy_checkpoint: "logs/rsl_rl/pour/policy.pt"
+    policy_type: "rsl_rl"
+    obs_space:
+      - "joint_pos"
+      - "joint_vel"
+      - "eef_pos"
+      - "eef_quat"
+      - "container_pos"
+      - "container_quat"
+      - "liquid_level"
+    action_space: "joint_position"
+    action_dim: 9
+    params:
+      - name: "source_position"
+        type: "vector3"
+        default: [0.4, -0.3, 0.1]
+      - name: "target_position"
+        type: "vector3"
+        default: [0.4, 0.3, 0.1]
+      - name: "pour_angle"
+        type: "float"
+        default: 1.57  # 90 degrees
+      - name: "pour_duration"
+        type: "float"
+        default: 3.0
+    safety_limits:
+      max_force: 30.0
+      max_velocity: 1.0
+      max_joint_velocity: 2.0
+      workspace_bounds:
+        min: [-0.6, -0.6, 0.0]
+        max: [0.6, 0.6, 1.0]
+      tilt_limit: 1.57  # max 90 deg tilt
+  
+  # Example: Handover (human-robot)
+  handover:
+    isaac_task: "Handover-Franka-v0"
+    policy_checkpoint: "logs/rsl_rl/handover/policy.pt"
+    policy_type: "rsl_rl"
+    obs_space:
+      - "joint_pos"
+      - "joint_vel"
+      - "eef_pos"
+      - "eef_quat"
+      - "human_hand_pos"
+      - "human_hand_quat"
+      - "object_pos"
+      - "force_torque"
+    action_space: "joint_position"
+    action_dim: 9
+    params:
+      - name: "handover_position"
+        type: "vector3"
+        default: [0.5, 0.0, 0.8]
+      - name: "release_force_threshold"
+        type: "float"
+        default: 5.0
+      - name: "approach_speed"
+        type: "float"
+        default: 0.1
+    safety_limits:
+      max_force: 20.0
+      max_velocity: 0.5
+      max_joint_velocity: 1.0
+      workspace_bounds:
+        min: [-0.4, -0.4, 0.5]
+        max: [0.6, 0.4, 1.2]
+      force_limit: 15.0
+      human_proximity_stop: 0.3
+
+# Global settings
+global:
+  sim_device: "cuda:0"
+  rl_device: "cuda:0"
+  headless: true
+  render_interval: 2  # render every N steps (0 = never)
+  physics_dt: 0.01
+  control_dt: 0.02  # 50Hz control
+  max_episode_length: 500
