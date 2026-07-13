@@ -179,10 +179,96 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ---
 
-## Usage in Hermes
+## Hermes Skill Mode (for `agentskills.io` skills)
 
-```python
-# Use this skill as a template when authoring READMEs
-# Combine with gitingest-usage to research existing READMEs first:
-# gitingest https://github.com/owner/repo -i "README*" -o -
+When the artifact is a **Hermes Agent skill** (a `SKILL.md` in `category/skill-name/`), use this structure instead of the package template. Skills install via `hermes skills install`, not pip.
+
+```markdown
+# <Skill Name>
+
+> **Tagline.** One sentence: what does this skill let Hermes do that it couldn't before?
+
+## Why this skill?
+
+2-3 sentences. The pain point (e.g. "parallel agent fan-outs fail silently when a
+retried worker late-completes the wrong dispatch") and how the skill closes it.
+
+## What it does
+
+- ✅ Capability 1 (concrete)
+- ✅ Capability 2
+- 🔄 Planned / caveat
+
+## Install
+
+```bash
+hermes skills tap add <owner>/<repo>
+hermes skills install <skill-name>
 ```
+
+## Quick Start
+
+```text
+In chat: "<natural-language trigger that invokes the skill>"
+```
+
+Or load explicitly:
+```bash
+hermes skill <skill-name>
+```
+
+## How it works
+
+ASCII or short prose of the execution flow:
+
+```
+input → phase 1 → phase 2 → output
+```
+
+Reference the `SKILL.md` phases. Link to `references/` for deep dives.
+
+## Usage / Examples
+
+### Basic
+<short real example: prompt + what Hermes does>
+
+### Advanced
+<multi-step or combined-with-other-skill example>
+
+## File layout
+
+| Path | Purpose |
+|------|---------|
+| `SKILL.md` | Definition: frontmatter + phased instructions |
+| `references/` | Deep-dive docs, API notes, gotchas |
+| `templates/` | Prompt bodies / config templates |
+| `scripts/` | Runnable helpers |
+
+## Related skills
+
+- `<other-skill>` — <one line on how they combine>
+
+## Notes / caveats
+
+- Security: <e.g. mount keys via credentials, never inline>
+- Limits: <e.g. concurrency cap, circuit breaker>
+
+## License
+
+MIT — © <year> <author>
+```
+
+**Differences from package mode:** no PyPI/CI badges, install is `hermes skills install`,
+"Minimal Working Example" becomes a chat trigger, "API Reference" becomes file-layout table.
+Generate the README FROM `SKILL.md` frontmatter (name/description) but EXPAND it by hand —
+never ship a stub that only echoes the frontmatter.
+
+## Decision: package vs skill
+
+- Repo is a code library/CLI → use the package template below.
+- Repo/folder is a Hermes skill (`SKILL.md` present) → use Hermes Skill Mode above.
+
+
+## References
+
+- `templates/README.template.md` — Full copy-paste template with all sections, badges, and examples
