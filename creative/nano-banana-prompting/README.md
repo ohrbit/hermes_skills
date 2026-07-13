@@ -1,13 +1,13 @@
-# bayesian-reasoning
+# nano-banana-prompting
 
-Probabilistic graphical models (Bayesian & Markov networks) for structured uncertainty reasoning in Hermes. Enables causal planning, belief tracking, diagnostic inference, and decision-making under uncertainty.
+"Prompting frameworks and patterns for Google Nano Banana (Gemini 3.1 Flash/Pro Image) models. Covers 5 core frameworks from Google's official guide."
 
 ## What it does
 This skill is defined in [`SKILL.md`](./SKILL.md). See SKILL.md for the full specification, steps, and pitfalls.
 
 ## Install
 ```bash
-hermes skills install bayesian-reasoning
+hermes skills install nano-banana-prompting
 ```
 
 ## Contents
@@ -17,7 +17,7 @@ hermes skills install bayesian-reasoning
 - `scripts/` — runnable helpers
 
 ## Category
-`reasoning`
+`creative`
 
 ---
 *This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
