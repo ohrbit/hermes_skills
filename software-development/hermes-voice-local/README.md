@@ -1,25 +1,73 @@
-# hermes-voice-local
+# Hermes Voice → Local (free, offline)
 
-"Set up Hermes voice (STT + TTS) fully local and free — stop paying for OpenAI Whisper transcription and run faster-whisper inside the gateway venv. Load this whenever the user wants local/offline voice, reports losing money on voice→text, or STT/TTS silently fails."
+> **Make Hermes transcribe your voice locally and speak via free Edge TTS** — stop paying OpenAI per voice message.
+
+## Why this skill?
+
+The silent money leak is almost always `stt.provider: openai` → paid `whisper-1` billed on every voice message. This skill flips Hermes to fully local STT (faster-whisper, inside the gateway venv) + free Edge TTS, with zero per-message cost. It also covers the failure mode where voice messages "could not be transcribed" because the provider is misconfigured.
 
 ## What it does
-This skill is defined in [`SKILL.md`](./SKILL.md). It is used for: - "voice auf lokal", "local voice", "switch to local STT", "stop paying for transcription"
-- User reports money lost on voice→text
-- Voice messages fail to transcribe ("voice message could not be transcribed")...
+
+- ✅ Switch STT to local faster-whisper (free)
+- ✅ Switch TTS to Edge (free)
+- ✅ Locate the gateway venv dynamically (STT runs there, not system python)
+- ✅ Diagnose what's currently paid (parse config.yaml directly)
+- ✅ Step-by-step free end state
+- 🔄 Works on linux + macos
 
 ## Install
+
 ```bash
+hermes skills tap add ohrbit/hermes_skills
 hermes skills install hermes-voice-local
 ```
 
-## Contents
-- `SKILL.md` — the skill definition (frontmatter + instructions)
-- `references/` — deep-dive docs and code
-- `templates/` — prompt / body templates
-- `scripts/` — runnable helpers
+## Quick Start
 
-## Category
-`software-development`
+```bash
+hermes config set stt.provider local
+hermes config set tts.provider edge
+# verify
+python3 -c "import yaml;c=yaml.safe_load(open('/root/.hermes/config.yaml'));print(c.get('stt'),c.get('tts'))"
+```
 
----
-*This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
+## How it works
+
+```
+voice message → gateway venv (faster-whisper, local) → transcript → Hermes
+Hermes reply → Edge TTS (free) → voice bubble
+```
+
+The correct free end state: `stt.provider=local`, `tts.provider=edge`, `terminal.backend=local`, `model.provider=nous`.
+
+## Usage / Examples
+
+### Basic
+> "Stop paying for voice transcription."
+
+Runs Step 0–2: locate gateway venv, diagnose current paid provider, switch to local + edge.
+
+### Advanced
+Gateway not running? The skill has fallback venv paths (`hermes_cli` package location, `/usr/local/lib/hermes-agent/venv`).
+
+## File layout
+
+| Path | Purpose |
+|------|---------|
+| `SKILL.md` | Steps, diagnosis, pitfalls |
+| `references/` | Extended setup notes |
+
+## Related skills
+
+- Your `config.yaml` — the file this edits
+- `hermes-context-stack` — for safe config management
+
+## Notes / caveats
+
+- **No `hermes config get`** — parse `config.yaml` with yaml directly.
+- STT runs inside the **gateway venv**, not your system `python3` — install faster-whisper there.
+- The leak is `stt.provider: openai` → paid `whisper-1`; flip to `local`.
+
+## License
+
+MIT — © 2024 ohrbit (author: ohrbit)
