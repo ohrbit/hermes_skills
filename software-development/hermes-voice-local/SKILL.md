@@ -1,6 +1,6 @@
 ---
 name: hermes-voice-local
-description: "Set up Hermes voice (STT + TTS) fully local and free — stop paying for OpenAI Whisper transcription, run faster-whisper inside the gateway venv, and avoid the disk-full trap. Load this whenever the user wants local/offline voice, reports losing money on voice→text, or STT/TTS silently fails."
+description: "Set up Hermes voice (STT + TTS) fully local and free — stop paying for OpenAI Whisper transcription and run faster-whisper inside the gateway venv. Load this whenever the user wants local/offline voice, reports losing money on voice→text, or STT/TTS silently fails."
 version: 1.1.0
 author: ohrbit
 license: MIT
@@ -17,7 +17,6 @@ back via the free Edge TTS voice. This is the correct, cost-free voice setup.
 - "voice auf lokal", "local voice", "switch to local STT", "stop paying for transcription"
 - User reports money lost on voice→text
 - Voice messages fail to transcribe ("voice message could not be transcribed")
-- Disk-full errors in gateway log (`sqlite3.OperationalError: disk I/O error`)
 
 ## TL;DR — the correct end state
 | Setting | Value | Cost |
@@ -65,23 +64,7 @@ does NOT help — the gateway won't see it.
 "$VENV/bin/python3" -c "import faster_whisper; print('ok', faster_whisper.__version__)"
 ```
 
-## Step 4 — Free disk BEFORE the model download (CRITICAL)
-**PITFALL:** the `base` whisper model is ~145 MB. On a near-full disk the download
-**silently fails** and you get garbage transcription. Check first:
-```bash
-df -h / | tail -1
-```
-If free space < 300 MB, clear safe, regenerable caches (never breaks running processes):
-```bash
-rm -rf ~/.cache/ms-playwright ~/.cache/uv ~/.cache/pip ~/.cache/node-gyp
-rm -rf ~/.npm/_cacache
-apt-get clean; rm -rf /var/lib/apt/lists/*
-journalctl --vacuum-size=30M
-```
-DO NOT touch: `/swapfile`, the Hermes install dir, or `~/.hermes` core
-(sessions/skills/state.db).
-
-## Step 5 — Verify local transcription works
+## Step 4 — Verify local transcription works
 ```bash
 "$VENV/bin/python3" - <<'PY'
 import glob, os
@@ -94,7 +77,7 @@ print("TRANSCRIBED:", repr(" ".join(s.text for s in segs)[:300]))
 print("lang:", info.language, "prob:", round(info.language_probability, 2))
 PY
 ```
-First run downloads the model — needs the free space from Step 4. Real text = success.
+First run downloads the model (~145 MB) — ensure enough free disk for it. Real text = success.
 
 ## Step 6 — Restart the gateway (USER action, not the agent)
 The gateway is a systemd-managed service and the agent's own shell is a child of it,
@@ -123,17 +106,15 @@ ffmpeg -i reply.mp3 -c:a libopus -b:a 32k reply.ogg
 ## Verification checklist
 - [ ] `stt.provider = local`, `tts.provider = edge`
 - [ ] faster-whisper importable in the **gateway venv**
-- [ ] `df -h /` shows > 300 MB free
 - [ ] Local transcription of a cached `.ogg` returns real text
 - [ ] Gateway restarted by the user, new start time confirmed
 - [ ] Live voice message transcribes, no charges
 
 ## Pitfalls summary
 1. **Wrong venv** — install faster-whisper in the gateway venv, not system python.
-2. **Disk full** — model download needs ~145 MB free; free caches first or it fails silently.
+2. **Model download needs disk** — the `base` whisper model is ~145 MB; ensure free space.
 3. **Restart blocked** — agent cannot restart its own gateway; user does it manually.
 4. **No `hermes config get`** — parse the yaml directly.
-5. **Tiny disks fill up** — consider a weekly cache-prune cron or a larger volume.
 
 ## Automated setup
 A ready-to-run script that performs Steps 0–5 is included at

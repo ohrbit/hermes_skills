@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # setup_local_voice.sh — Hermes Voice → Local (free, offline)
-# Performs Steps 0-5 of the hermes-voice-local skill:
+# Performs the hermes-voice-local skill setup:
 #   - locate the gateway venv
 #   - set stt.provider=local, tts.provider=edge
 #   - install faster-whisper into the gateway venv
-#   - free disk if needed (model download needs ~145 MB)
 #   - verify local transcription works
-# Step 6 (gateway restart) must be done MANUALLY by the user afterwards.
+# Note: the base whisper model is ~145 MB — ensure free disk before running.
+# Gateway restart (final step) must be done MANUALLY by the user afterwards.
 set -euo pipefail
 
 echo "== Hermes Voice → Local setup =="
@@ -32,19 +32,6 @@ echo "gateway venv: $VENV"
 echo "== setting providers to local/free =="
 hermes config set stt.provider local
 hermes config set tts.provider edge || true
-
-# --- Step 4: free disk if needed ---
-FREE_MB=$(df -m / | awk 'NR==2 {print $4}')
-echo "disk free: ${FREE_MB} MB"
-if [ "${FREE_MB:-0}" -lt 300 ]; then
-  echo "low disk — clearing safe caches..."
-  rm -rf ~/.cache/ms-playwright ~/.cache/uv ~/.cache/pip ~/.cache/node-gyp
-  rm -rf ~/.npm/_cacache
-  apt-get clean 2>/dev/null || true
-  rm -rf /var/lib/apt/lists/* 2>/dev/null || true
-  journalctl --vacuum-size=30M 2>/dev/null || true
-  echo "disk free now: $(df -m / | awk 'NR==2 {print $4}') MB"
-fi
 
 # --- Step 3: install faster-whisper into gateway venv ---
 if "$VENV/bin/python3" -c "import faster_whisper" 2>/dev/null; then
