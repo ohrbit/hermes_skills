@@ -20,4 +20,4 @@ hermes skills install model-selection-and-jit-routing
 `devops`
 
 ---
-*This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
+*This README was generated from `SKILL.md` by scripts/generate_readmes.py.*

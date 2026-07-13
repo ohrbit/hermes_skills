@@ -20,4 +20,4 @@ hermes skills install bayesian-reasoning
 `reasoning`
 
 ---
-*This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
+*This README was generated from `SKILL.md` by scripts/generate_readmes.py.*

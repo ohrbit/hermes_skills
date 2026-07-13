@@ -3,9 +3,7 @@
 >-
 
 ## What it does
-This skill is defined in [`SKILL.md`](./SKILL.md). It is used for: - User asks for "swarm loop", "agent swarm", "evolutionary team", "self-improving agents".
-- A deliverable needs iterative refinement with measurable quality (not one-shot).
-- You want parallel experts collaborating on a shared repo WITHOUT a shared FS hack....
+This skill is defined in [`SKILL.md`](./SKILL.md). Use it for: - User asks for "swarm loop", "agent swarm", "evolutionary team", "self-improving agents". - A deliverable needs iterative refinement with measurable quality (not one-shot). - You want parallel experts collaborating on a shared repo WITHOUT a shared FS hack..
 
 ## Install
 ```bash
@@ -22,4 +20,4 @@ hermes skills install agent-swarm-loop
 `devops`
 
 ---
-*This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
+*This README was generated from `SKILL.md` by scripts/generate_readmes.py.*

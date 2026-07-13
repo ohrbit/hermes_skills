@@ -1,7 +1,6 @@
 # hermes_skills
 
-A curated collection of [Hermes Agent](https://hermes-agent.nousresearch.com) skills published by **ohrbit**.
-Each skill lives in `category/skill-name/` with a `SKILL.md` (the definition) and a human-readable `README.md`.
+A curated collection of [Hermes Agent](https://hermes-agent.nousresearch.com) skills. Each skill lives in `category/skill-name/` with a `SKILL.md` (the definition) and a human-readable `README.md`.
 
 ## Install
 ```bash
@@ -63,15 +62,17 @@ hermes skills install <skill-name>
 ```
 hermes_skills/
 ├── README.md            # this file (index of all skills)
-├── <category>/
-│   └── <skill>/
-│       ├── README.md    # human-readable overview
-│       ├── SKILL.md     # the skill definition
-│       ├── references/  # deep-dive docs
-│       ├── templates/   # prompt bodies
-│       └── scripts/     # runnable helpers
+├── scripts/generate_readmes.py  # regenerate all READMEs
+└── <category>/
+    └── <skill>/
+        ├── README.md
+        ├── SKILL.md
+        ├── references/
+        ├── templates/
+        └── scripts/
 ```
 
 ## Notes
 - Skills follow the [agentskills.io](https://agentskills.io) convention.
 - Per-skill READMEs are generated from `SKILL.md`; extend them as needed.
+- Regenerate after adding skills: `python3 scripts/generate_readmes.py`

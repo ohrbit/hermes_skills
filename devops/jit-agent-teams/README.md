@@ -3,10 +3,7 @@
 >-
 
 ## What it does
-This skill is defined in [`SKILL.md`](./SKILL.md). It is used for: - User explicitly asks for "JIT teams" / "ephemeral profiles per task".
-- A deliverable decomposes into 2–4 independent specialist pieces (UI / engine /
-  GFX / merge, etc.) that can be built in parallel.
-- You want cloud (Modal) parallelism without solving cross-sandbox file sharing....
+This skill is defined in [`SKILL.md`](./SKILL.md). Use it for: - User explicitly asks for "JIT teams" / "ephemeral profiles per task". - A deliverable decomposes into 2–4 independent specialist pieces (UI / engine /   GFX / merge, etc.) that can be built in parallel. - You want cloud (Modal) parallelism without solving cross-sandbox file sharing..
 
 ## Install
 ```bash
@@ -23,4 +20,4 @@ hermes skills install jit-agent-teams
 `devops`
 
 ---
-*This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
+*This README was generated from `SKILL.md` by scripts/generate_readmes.py.*
