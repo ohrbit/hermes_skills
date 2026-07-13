@@ -9,55 +9,49 @@ hermes skills tap add ohrbit/hermes_skills
 hermes skills install <skill-name>
 ```
 
-## Skills (13)
+## Skills (14)
 
 ### creative
-
 | Skill | Description |
 |---|---|
-| **nano-banana-prompting** | "Prompting frameworks and patterns for Google Nano Banana (Gemini 3.1 Flash/Pro Image) models. Covers 5 core frameworks from Google's official guide." |
+| **nano-banana-prompting** | Prompting frameworks/patterns for Google Nano Banana (Gemini 3.1 Flash/Pro Image) — 5 official frameworks. |
 
 ### devops
-
 | Skill | Description |
 |---|---|
-| **agent-swarm-loop** | >- |
-| **hermes-serverless-backend** | Wire Modal (or Daytona) as the serverless `terminal.backend` for Hermes so agent + subagent shell/execute_code run in ephemeral cloud sandboxes (idle = $0). ... |
-| **jit-agent-teams** | >- |
-| **kanban-orchestrator** | Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The "don't do the work yourself" rule and the basic l... |
-| **model-selection-and-jit-routing** | "Pick the right available model per task (chat/coding/reasoning/vision/long-context) and route JIT agent-team profiles to the best-fit provider, using live p... |
+| **agent-swarm-loop** | Evolutionary, fitness-gated multi-agent orchestration — dynamic expert teams on a shared GitHub workspace, selection + persistence. |
+| **jit-agent-teams** | Spin up Just-In-Time agent teams per task — ephemeral profiles, parallel kanban dispatch, Kanban-as-IPC, Modal wedge recovery. |
+| **kanban-orchestrator** | Decomposition playbook for routing work through Kanban — decompose don't execute, JIT profile pattern, dependencies. |
+| **model-selection-and-jit-routing** | Pick the right model per task + route JIT agents by real free-tier limits (Nous/DeepSeek/Cerebras/NVIDIA/Gemini). |
+| **hermes-serverless-backend** | Wire Modal/Daytona as the serverless `terminal.backend` — agent compute in ephemeral cloud sandboxes, idle = $0. |
 
 ### hermes
-
 | Skill | Description |
 |---|---|
-| **hermes-context-stack** | Verify and manage Hermes context-stack files (SOUL.md, user.md, .hermes.md, AGENTS.md) across the default profile and per-profile directories. Use when a use... |
+| **hermes-context-stack** | Verify/manage context-stack files (SOUL.md, user.md, .hermes.md) across default + per-profile dirs. |
+| **hermes-voice-local** | Set up Hermes voice (STT + TTS) fully local + free — faster-whisper + Edge TTS, stop paying for OpenAI. |
 
 ### productivity
-
 | Skill | Description |
 |---|---|
-| **github-readme-authoring** | Create production-grade GitHub README.md files — structure, badges, installation, usage, API, contributing, license, and maintenance sections with real examples |
+| **github-readme-authoring** | Production-grade GitHub READMEs — structure, badges, install, usage, API, contributing, license (incl. Hermes Skill Mode). |
 
 ### reasoning
-
 | Skill | Description |
 |---|---|
-| **bayesian-reasoning** | Probabilistic graphical models (Bayesian & Markov networks) for structured uncertainty reasoning in Hermes. Enables causal planning, belief tracking, diagnos... |
+| **bayesian-reasoning** | Probabilistic graphical models (Bayesian/Markov networks) for uncertainty reasoning — causal planning, diagnosis, decision-making. |
 
 ### robotics
-
 | Skill | Description |
 |---|---|
-| **isaac-lab-bridge** | Bridge between Hermes (cognitive architecture) and Isaac Lab (robot learning). Translates Hermes plans → Isaac Lab policy execution → observations back to He... |
+| **isaac-lab-bridge** | Bridge Hermes (cognitive) ↔ Isaac Lab (motor) — plans → RL policy execution → observations back to memory. |
 
 ### software-development
-
 | Skill | Description |
 |---|---|
-| **github-repo-ingest** | Shallow-first GitHub repository ingestion using gitingest CLI. Start with README + structure, then selectively deep-dive into specific directories/files. |
-| **gitingest-usage** | Best practices for using GitIngest (CLI & Python) to extract repository content for LLM consumption |
-| **hermes-voice-local** | "Set up Hermes voice (STT + TTS) fully local and free — stop paying for OpenAI Whisper transcription and run faster-whisper inside the gateway venv. Load thi... |
+| **github-repo-ingest** | Shallow-first GitHub repo ingestion via gitingest — README + tree first, then targeted deep dives. |
+| **gitingest-usage** | Best practices for GitIngest (CLI & Python) to extract repo content for LLM consumption. |
+| **third-party-skill-evaluation** | Evaluate external agent-skill repos for import — discovery, relevance scoring, adaptation feasibility, import/adapt/skip verdict. |
 
 ## Layout
 ```
@@ -74,4 +68,5 @@ hermes_skills/
 
 ## Notes
 - Skills follow the [agentskills.io](https://agentskills.io) convention.
-- Per-skill READMEs are generated from `SKILL.md`; extend them as needed.
+- Every published skill has a hand-authored `README.md` (see `github-readme-authoring`).
+- Install a skill, then read its `README.md` for usage.
