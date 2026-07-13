@@ -1,13 +1,13 @@
-# bayesian-reasoning
+# github-repo-ingest
 
-Probabilistic graphical models (Bayesian & Markov networks) for structured uncertainty reasoning in Hermes. Enables causal planning, belief tracking, diagnostic inference, and decision-making under uncertainty.
+Shallow-first GitHub repository ingestion using gitingest CLI. Start with README + structure, then selectively deep-dive into specific directories/files.
 
 ## What it does
 This skill is defined in [`SKILL.md`](./SKILL.md). See SKILL.md for the full specification, steps, and pitfalls.
 
 ## Install
 ```bash
-hermes skills install bayesian-reasoning
+hermes skills install github-repo-ingest
 ```
 
 ## Contents
@@ -17,7 +17,7 @@ hermes skills install bayesian-reasoning
 - `scripts/` — runnable helpers
 
 ## Category
-`reasoning`
+`software-development`
 
 ---
 *This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*

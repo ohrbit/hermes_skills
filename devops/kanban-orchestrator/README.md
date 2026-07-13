@@ -1,13 +1,13 @@
-# bayesian-reasoning
+# kanban-orchestrator
 
-Probabilistic graphical models (Bayesian & Markov networks) for structured uncertainty reasoning in Hermes. Enables causal planning, belief tracking, diagnostic inference, and decision-making under uncertainty.
+Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanban. The "don't do the work yourself" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.
 
 ## What it does
 This skill is defined in [`SKILL.md`](./SKILL.md). See SKILL.md for the full specification, steps, and pitfalls.
 
 ## Install
 ```bash
-hermes skills install bayesian-reasoning
+hermes skills install kanban-orchestrator
 ```
 
 ## Contents
@@ -17,7 +17,7 @@ hermes skills install bayesian-reasoning
 - `scripts/` — runnable helpers
 
 ## Category
-`reasoning`
+`devops`
 
 ---
 *This README was generated from `SKILL.md`. Review and extend it before publishing if needed.*
