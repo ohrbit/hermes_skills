@@ -122,8 +122,10 @@ for "build a realtime collaborative editor": it might spawn `conflict-resolver`,
 
 Spawn pattern (reuse `jit-agent-teams`):
 ```
-# 0. copy ACTIVE SOUL.md into the ephemeral profile (discipline lever):
-cp ~/.hermes/SOUL.md ~/.hermes/profiles/swarm-<round>-<role>/SOUL.md
+# 0. copy a SOUL.md into the ephemeral profile (discipline lever):
+SRC=~/.hermes/SOUL.md          # personal (if present)
+[ -f "$SRC" ] || SRC=~/.hermes/skills/devops/setup-bundle/SOUL.md  # shared core
+cp "$SRC" ~/.hermes/profiles/swarm-<round>-<role>/SOUL.md
 hermes profile create swarm-<round>-<role>        # ephemeral
 hermes kanban create "<role>: <goal>" --assignee swarm-<round>-<role> \
     --goal "<goal>" --goal-max-turns N \

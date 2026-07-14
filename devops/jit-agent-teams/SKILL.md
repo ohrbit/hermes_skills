@@ -34,11 +34,13 @@ pipeline). JIT teams are bespoke, per-job, and thrown away.
 
 ```
 1. CREATE   hermes profile create gs-ui / gs-engine / gs-gfx / gs-merge
-   → after create, copy the ACTIVE SOUL.md into each new profile so workers
-     inherit your persona + operational principles (Verify>assume, Fail fwd,
-     Bias→action) instead of stock boilerplate:
+   → after create, copy a SOUL.md into each new profile so workers inherit
+     the WORKER DISCIPLINE core (Verify>assume, Fail fwd, Bias→action)
+     instead of stock boilerplate:
+     SRC=~/.hermes/SOUL.md          # personal (if present)
+     [ -f "$SRC" ] || SRC=~/.hermes/skills/devops/setup-bundle/SOUL.md  # shared core
      for p in gs-ui gs-engine gs-gfx gs-merge; do
-       cp ~/.hermes/SOUL.md ~/.hermes/profiles/$p/SOUL.md; done
+       cp "$SRC" ~/.hermes/profiles/$p/SOUL.md; done
 2. DISPATCH hermes kanban create "..." --assignee gs-ui --goal --goal-max-turns N --body "..."   (×N, parallel)
 3. MERGE    hermes kanban create "merge" --assignee gs-merge --parent t_ui t_engine t_gfx --body "..."
 4. DELETE   hermes profile delete gs-ui gs-engine gs-gfx gs-merge   (after all done)
