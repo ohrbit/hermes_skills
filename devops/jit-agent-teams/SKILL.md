@@ -34,6 +34,11 @@ pipeline). JIT teams are bespoke, per-job, and thrown away.
 
 ```
 1. CREATE   hermes profile create gs-ui / gs-engine / gs-gfx / gs-merge
+   → after create, copy the ACTIVE SOUL.md into each new profile so workers
+     inherit your persona + operational principles (Verify>assume, Fail fwd,
+     Bias→action) instead of stock boilerplate:
+     for p in gs-ui gs-engine gs-gfx gs-merge; do
+       cp ~/.hermes/SOUL.md ~/.hermes/profiles/$p/SOUL.md; done
 2. DISPATCH hermes kanban create "..." --assignee gs-ui --goal --goal-max-turns N --body "..."   (×N, parallel)
 3. MERGE    hermes kanban create "merge" --assignee gs-merge --parent t_ui t_engine t_gfx --body "..."
 4. DELETE   hermes profile delete gs-ui gs-engine gs-gfx gs-merge   (after all done)
@@ -114,6 +119,23 @@ When reassembling from extracted summaries:
   often arrive **missing the closing `});`** — append it after extraction.
 - After assembling, run `node --check` on the extracted `<script>` block, then a
   runtime harness with a mock canvas/DOM (see reference) to confirm it executes.
+
+### 6. Dispatch MUST pass `skills=[...]` (capability lever)
+A bare `delegate_task` / kanban worker gets NO skills and GUESSES domain
+knowledge — wrong APIs, wrong commands, missed pitfalls. The orchestrator
+MUST pass the role-relevant skills when dispatching:
+- ui worker    → `skills=["fable-style-singlefile-web","popular-web-designs","refactoring-ui"]`
+- engine worker→ `skills=["test-driven-development","systematic-debugging","simplify-code"]`
+- gfx worker   → `skills=["p5js","manim-video"]`
+- merge worker  → `skills=["github-pr-workflow","requesting-code-review"]`
+This is the Tunnel-Derby lesson: skipping `skills=[...]` on fan-out = generic,
+wrong output. Non-negotiable.
+
+### 7. Per-task profiles MUST inherit SOUL.md (discipline lever)
+Fresh `hermes profile create` yields a STOCK 513-byte SOUL → worker runs as a
+generic assistant, drops Verify>assume / Fail-fwd, and STALLS or ASSERTS
+unverified results. Copy the active SOUL into every new profile (see lifecycle
+step 1). Without this, workers don't self-correct and don't finish reliably.
 
 ## Verification checklist
 - [ ] All specialist tasks reach `done` (or, if wedged, their summaries hold

@@ -122,11 +122,26 @@ for "build a realtime collaborative editor": it might spawn `conflict-resolver`,
 
 Spawn pattern (reuse `jit-agent-teams`):
 ```
+# 0. copy ACTIVE SOUL.md into the ephemeral profile (discipline lever):
+cp ~/.hermes/SOUL.md ~/.hermes/profiles/swarm-<round>-<role>/SOUL.md
 hermes profile create swarm-<round>-<role>        # ephemeral
 hermes kanban create "<role>: <goal>" --assignee swarm-<round>-<role> \
     --goal "<goal>" --goal-max-turns N \
     --body "<see templates/orchestrator-loop.md: WORKER BODY>"
 ```
+⚠️ SOUL inheritance is MANDATORY, not optional: a fresh `hermes profile
+create` yields a STOCK 513-byte SOUL → the worker runs as a generic
+assistant, drops Verify>assume / Fail-fwd, STALLS or ASSERTS unverified
+results. Copy the active SOUL (your persona + operational principles) into
+every `swarm-<round>-<role>` profile at create time.
+
+⚠️ `skills=[...]` is TWO-dimensional and both are required:
+- (a) contract skill: ALWAYS `skills=["agent-swarm-loop"]` (interface + preamble).
+- (b) domain skills: the orchestrator MUST add the role-relevant skills so
+  the worker knows the HOW (APIs, commands, pitfalls), e.g.
+  `skills=["agent-swarm-loop","test-driven-development","systematic-debugging"]`.
+  A bare dispatch GUESSES domain knowledge → wrong APIs, missed pitfalls
+  (the Tunnel-Derby lesson). Invent the domain list per invented role.
 Each worker body MUST include:
 1. Read priv key from the **mounted** keystore JSON (`/root/.hermes/swarm_tunnel_derby_keys.json`), write to `~/.ssh/id_ed25519`, `chmod 600`, set `GIT_SSH_COMMAND`. (Never inline the key in the prompt — it gets redacted.)
 2. Clone `git@github.com:owner/repo.git -b <base-branch>` to a workdir.
@@ -233,6 +248,14 @@ team shape + default metric weights**. This is what makes it evolutionary.
   decision, it must `kanban block` / ask the coordinator. A `AskUserQuestion`-style
   TUI prompt hangs forever because the Orchestrator can't see or answer it. The
   preamble forbids it explicitly.
+- **PUBLISHING SAFETY (user-stated rule, hard line)** — when snapshotting skills to a
+  public repo (e.g. `ohrbit/hermes_skills`), NEVER include real keys/tokens. Scan every
+  staged file for `ghp_…`, `sk-…`, `-----BEGIN OPENSSH PRIVATE KEY-----` (non-placeholder),
+  and literal `GITHUB_TOKEN=`. Use placeholders only (`<priv key text>`, `<owner>/<repo>`,
+  `<YOUR_ROLE>`). Mint a repo-scoped deploy key to push, then REVOKE it after merge.
+  See `references/snapshot-skill-to-repo.md` for the exact flow + mandatory key-scan.
+  The Orchestrator's own `swarm_keys.jsonl` / `swarm_snapshot_keys.json` must NEVER be
+  staged.
 
 ## Verification checklist
 - [ ] PHASE 0 done: user picked + weighted metrics.
@@ -253,6 +276,8 @@ team shape + default metric weights**. This is what makes it evolutionary.
 - `jit-agent-teams` — Kanban-as-IPC, Modal wedge recovery, JIT lifecycle.
 - `hermes-serverless-backend` — wiring Modal as `terminal.backend`.
 - `references/github-workspace.md` — deploy-key provisioning code + redaction trap.
+- `references/orca-orchestration-patterns.md` — distilled Orca engine (`stablyai/orca`) patterns this skill reuses: dispatchId correlation, circuit breaker, heartbeat, preamble, decision gates.
+- `references/snapshot-skill-to-repo.md` — proven flow to publish a skill to `ohrbit/hermes_skills` with a mandatory no-real-keys scan.
 - `references/fitness-metrics.md` — metric families + rubrics.
 - `references/modal-sandbox-api.md` — Modal v1.3.4 gotchas (Sandbox.create argv list, Image.add_local_file, stdout-after-wait, credential_files VERIFIED).
 - `references/fitness-tuning.md` — binary-cliff trap + Orchestrator-sweep methodology (MUST READ before re-dispatching on a failed fitness round).
