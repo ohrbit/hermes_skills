@@ -1,0 +1,17 @@
+[Unit]
+Description=Cloudflare Tunnel for Hermes Dashboard
+After=hermes-dashboard.service
+Requires=hermes-dashboard.service
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/cloudflared tunnel --url http://127.0.0.1:9119
+Restart=on-failure
+RestartSec=5
+User=root
+StandardOutput=append:/var/log/cloudflared/tunnel.log
+StandardError=append:/var/log/cloudflared/tunnel.log
+
+[Install]
+WantedBy=multi-user.target

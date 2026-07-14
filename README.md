@@ -30,6 +30,7 @@ hermes skills install <skill-name>
 | **kanban-orchestrator** | Decomposition playbook for routing work through Kanban — decompose don't execute, JIT profile pattern, dependencies. |
 | **model-selection-and-jit-routing** | Pick the right model per task + route JIT agents by real free-tier limits (Nous/DeepSeek/Cerebras/NVIDIA/Gemini). |
 | **hermes-serverless-backend** | Wire Modal/Daytona as the serverless `terminal.backend` — agent compute in ephemeral cloud sandboxes, idle = $0. |
+| **setup-bundle** | Reproduction bundle for the full Hermes stack — nightly maintenance script, tunnel unit, SETUP.md. |
 
 ### 🧠 hermes
 | Skill | Description |
